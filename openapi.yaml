@@ -1,44 +1,73 @@
 openapi: 3.0.1
 info:
-  title: Stable Diffusion Plugin
-  description: A plugin that allows the user to generate images using ChatGPT.
+  title: Replicate models
+  description: A plugin that allows the user to run Replicate models from ChatGPT.
   version: 'v1'
 servers:
   - url: http://localhost:5003
 paths:
-  /image:
+  /model:
     post:
-      operationId: generateImage
-      summary: generate new based on prompt
+      operationId: getModel
+      summary: get information about a model and how to run it
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/generateImageRequest'
+              $ref: '#/components/schemas/getModelRequest'
+      responses:
+        "200":
+          description: OK
+  /run:
+    post:
+      operationId: runModel
+      summary: run a model on Replicate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/runModelRequest'
       responses:
         "200":
           description: OK
 
 components:
   schemas:
-    generateImageResponse:
-      type: array
-      items:
-        type: uri
-      description: URLs for images
-    generateImageRequest:
+    getModelResponse:
+      type: string
+      description: JSON representation of the model and its input parameters, including version number
+    getModelRequest:
       type: object
-      required:
-      - image
       properties:
-        prompt:
+        username:
           type: string
-          description: descriptive of image
+          description: owner of the model
           required: true
-        n:
-          type: integer
-          description: how many to generate
-          default: 1
-          maximum: 4
-          minimum: 1
+        model:
+          type: string
+          description: name of the model
+          required: true
+    runModelResponse:
+      type: string
+      description: JSON representation of the output from the model
+    runModelRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: owner of the model
+          required: true
+        model:
+          type: string
+          description: name of the model
+          required: true
+        version:
+          type: string
+          description: the version of the model to use
+          required: true
+        inputJSON:
+          type: string
+          description: a stringified JSON object of the input params for the model
+          required: true

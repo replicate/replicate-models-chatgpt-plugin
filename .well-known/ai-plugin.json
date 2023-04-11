@@ -1,9 +1,9 @@
 {
   "schema_version": "v1",
-  "name_for_human": "Stable Diffusion Plugin",
+  "name_for_human": "Replicate models",
   "name_for_model": "replicate_sd",
-  "description_for_human": "Plugin to generate images with AI",
-  "description_for_model": "Plugin to generate images with AI",
+  "description_for_human": "Plugin to run Replicate models",
+  "description_for_model": "Plugin to run Replicate models",
   "auth": {
     "type": "none"
   },

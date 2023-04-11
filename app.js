@@ -19,20 +19,56 @@ const __dirname = dirname(__filename)
 app.use(cors({ origin: 'https://chat.openai.com' }))
 app.use(express.json())
 
-app.post('/image', asyncHandler(async (req, res) => {
-  const { prompt, n = 1 } = req.body
-  const numOutputs = parseInt(n, 10)
+app.post('/run', asyncHandler(async (req, res) => {
+  console.log('run', req.body)
+  const { username, model, version, inputJSON } = req.body
 
-  console.log(prompt, numOutputs)
+  if (!username || !model || !version || !inputJSON) {
+    const missing = []
+    if (!username) missing.push('username')
+    if (!model) missing.push('model')
+    if (!version) missing.push('version')
+    if (!inputJSON) missing.push('inputJSON')
+    res.status(400).json({ error: `Missing required parameters: ${missing.join(',')}` })
+    return
+  }
 
-  const model = "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf"
-  const input = { prompt, num_outputs: numOutputs }
-  const output = await replicate.run(model, { input })
+  try {
+    const input = JSON.parse(inputJSON)
+    console.log(input)
+    const output = await replicate.run(`${username}/${model}:${version}`, { input })
+    res.status(200).json(output)
+  } catch (e) {
+    console.log(e)
+    res.status(500).json({ error: e.message })
+  }
+}))
 
-  console.log(output)
+app.post('/model', asyncHandler(async (req, res) => {
+  console.log('model', req.body)
 
+  const { username, model } = req.body
+  const output = await getModel(username, model)
   res.status(200).json(output)
 }))
+
+app.get('/model', asyncHandler(async (req, res) => {
+  const { username, model } = req.query
+  const output = await getModel(username, model)
+  res.status(200).json(output)
+}))
+
+const getModel = async (username, model) => {
+  const response = await replicate.models.get(username, model)
+  const output = {
+    url: response.url,
+    version: response.latest_version.id,
+    cover_image_url: response.cover_image_url,
+    description: response.description,
+    input_schema: response.latest_version.openapi_schema.components.schemas.Input,
+  }
+  return output
+}
 
 app.get('/logo.png', asyncHandler(async (req, res) => {
   const filename = path.join(__dirname, 'logo.png')
