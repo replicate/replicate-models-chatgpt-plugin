@@ -1,0 +1,44 @@
+openapi: 3.0.1
+info:
+  title: Stable Diffusion Plugin
+  description: A plugin that allows the user to generate images using ChatGPT.
+  version: 'v1'
+servers:
+  - url: http://localhost:5003
+paths:
+  /image:
+    post:
+      operationId: generateImage
+      summary: generate new based on prompt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/generateImageRequest'
+      responses:
+        "200":
+          description: OK
+
+components:
+  schemas:
+    generateImageResponse:
+      type: array
+      items:
+        type: uri
+      description: URLs for images
+    generateImageRequest:
+      type: object
+      required:
+      - image
+      properties:
+        prompt:
+          type: string
+          description: descriptive of image
+          required: true
+        n:
+          type: integer
+          description: how many to generate
+          default: 1
+          maximum: 4
+          minimum: 1

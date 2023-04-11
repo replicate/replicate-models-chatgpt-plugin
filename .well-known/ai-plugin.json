@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Stable Diffusion Plugin",
+  "name_for_model": "replicate_sd",
+  "description_for_human": "Plugin to generate images with AI",
+  "description_for_model": "Plugin to generate images with AI",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "http://localhost:5003/openapi.yaml",
+    "is_user_authenticated": false
+  },
+  "logo_url": "http://localhost:5003/logo.png",
+  "contact_email": "legal@example.com",
+  "legal_info_url": "http://example.com/legal"
+}
