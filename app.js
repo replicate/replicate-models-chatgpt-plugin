@@ -46,29 +46,71 @@ app.post('/run', asyncHandler(async (req, res) => {
 
 app.post('/model', asyncHandler(async (req, res) => {
   console.log('model', req.body)
-
   const { username, model } = req.body
-  const output = await getModel(username, model)
-  res.status(200).json(output)
-}))
-
-app.get('/model', asyncHandler(async (req, res) => {
-  const { username, model } = req.query
-  const output = await getModel(username, model)
-  res.status(200).json(output)
-}))
-
-const getModel = async (username, model) => {
   const response = await replicate.models.get(username, model)
   const output = {
     url: response.url,
     version: response.latest_version.id,
-    cover_image_url: response.cover_image_url,
     description: response.description,
-    input_schema: response.latest_version.openapi_schema.components.schemas.Input,
+    schema: response.latest_version.openapi_schema
   }
-  return output
-}
+  res.status(200).json(output)
+}))
+
+app.post('/collections', asyncHandler(async (req, res) => {
+  console.log('collections')
+  res.status(200).json([
+    {
+      slug: 'image-to-text',
+      description: 'Models that generate images from text prompts'
+    },
+    {
+      slug: 'audio-generation',
+      description: 'Models to generate and modify audio'
+    },
+    {
+      slug: 'diffusion-models',
+      description: 'Image and video generation models trained with diffusion processes'
+    },
+    {
+      slug: 'image-restoration',
+      description: 'Models that improve or restore images by deblurring, colorization, and removing noise'
+    },
+    {
+      slug: 'ml-makeovers',
+      description: 'Models that let you change facial features'
+    },
+    {
+      slug: 'super-resolution',
+      description: 'Upscaling models that create high-quality images from low-quality images'
+    },
+    {
+      slug: 'text-to-video',
+      description: 'Models that create and edit videos'
+    },
+    {
+      slug: 'style-transfer',
+      description: 'Models that transfer the style of one image to another'
+    },
+  ])
+}))
+
+app.post('/collection', asyncHandler(async (req, res) => {
+  console.log('collection', req.body)
+  const { collection_slug } = req.body
+  const response = await replicate.collections.get(collection_slug)
+  const models = response.models.map((model) => {
+    return {
+      url: model.url,
+      username: model.owner,
+      model: model.name,
+      version: model.latest_version.id,
+      description: model.description
+    }
+  })
+
+  res.status(200).json(models)
+}))
 
 app.get('/logo.png', asyncHandler(async (req, res) => {
   const filename = path.join(__dirname, 'logo.png')

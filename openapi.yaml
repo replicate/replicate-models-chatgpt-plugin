@@ -6,6 +6,26 @@ info:
 servers:
   - url: http://localhost:5003
 paths:
+  /collections:
+    post:
+      operationId: getCollections
+      summary: get a list of available collections, descriptions and their slugs
+      responses:
+        "200":
+          description: OK
+  /collection:
+    post:
+      operationId: getCollection
+      summary: get a list of models in a collection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/getCollectionRequest'
+      responses:
+        "200":
+          description: OK
   /model:
     post:
       operationId: getModel
@@ -35,6 +55,13 @@ paths:
 
 components:
   schemas:
+    getCollectionRequest:
+      type: object
+      properties:
+        collection_slug:
+          type: string
+          description: slug of the collection
+          required: true
     getModelResponse:
       type: string
       description: JSON representation of the model and its input parameters, including version number
