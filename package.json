@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon -e js,json,mjs,yaml app.js"
   },
   "author": "fofr",
   "license": "MIT",
@@ -16,5 +16,8 @@
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
     "replicate": "^0.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }
