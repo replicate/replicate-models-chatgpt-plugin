@@ -6,95 +6,92 @@ info:
 servers:
   - url: http://localhost:5003
 paths:
-  /collections:
+  /getModelSchemas:
     post:
-      operationId: getCollections
-      summary: get a list of available collections, descriptions and their slugs
-      responses:
-        "200":
-          description: OK
-  /collection:
-    post:
-      operationId: getCollection
-      summary: get a list of models in a collection
+      operationId: getInfo
+      summary: get information about models and how to run them
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/getCollectionRequest'
-      responses:
-        "200":
-          description: OK
-  /model:
-    post:
-      operationId: getModel
-      summary: get information about a model and how to run it
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/getModelRequest'
+              $ref: '#/components/schemas/getInfoRequest'
       responses:
         "200":
           description: OK
   /run:
     post:
-      operationId: runModel
-      summary: run a model on Replicate
+      operationId: runModels
+      summary: run models on Replicate
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/runModelRequest'
+              $ref: '#/components/schemas/runModelsRequest'
       responses:
         "200":
           description: OK
 
 components:
   schemas:
-    getCollectionRequest:
-      type: object
-      properties:
-        collection_slug:
-          type: string
-          description: slug of the collection
-          required: true
-    getModelResponse:
-      type: string
-      description: JSON representation of the model and its input parameters, including version number
-    getModelRequest:
+    SchemaModel:
       type: object
       properties:
         username:
           type: string
-          description: owner of the model
-          required: true
+          description: The owner of the model
         model:
           type: string
-          description: name of the model
-          required: true
-    runModelResponse:
-      type: string
-      description: JSON representation of the output from the model
-    runModelRequest:
+          description: The name of the model
+      required:
+        - username
+        - model
+    RunModel:
       type: object
       properties:
         username:
           type: string
-          description: owner of the model
-          required: true
+          description: The owner of the model
         model:
           type: string
-          description: name of the model
-          required: true
-        version:
-          type: string
-          description: the version of the model to use
-          required: true
-        inputJSON:
-          type: string
-          description: a stringified JSON object of the input params for the model
-          required: true
+          description: The name of the model
+        input:
+          type: object
+          description: The input data to be passed to the model
+      required:
+        - username
+        - model
+        - input
+    runModelsRequest:
+      type: object
+      properties:
+        models:
+          type: array
+          description: An array of models and their inputs
+          items:
+            $ref: '#/components/schemas/RunModel'
+      required:
+        - models
+    runModelsResponse:
+      type: string
+      description: JSON representation of an array of the outputs from the models
+    getInfoResponse:
+      type: array,
+      description: An array containing each of the model outputs,
+      items:
+        type: object,
+        properties:
+          output:
+            type: string,
+            description: The output from the model
+    getInfoRequest:
+      type: object
+      properties:
+        schemas:
+          type: array
+          description: An array of usernames and model names
+          items:
+            $ref: '#/components/schemas/SchemaModel'
+      required:
+        - schemas
