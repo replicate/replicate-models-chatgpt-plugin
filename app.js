@@ -20,7 +20,6 @@ app.use(cors({ origin: 'https://chat.openai.com' }))
 app.use(express.json())
 
 app.post('/run', asyncHandler(async (req, res) => {
-  console.log('run', req.body)
   const { username, model, version, inputJSON } = req.body
 
   if (!username || !model || !version || !inputJSON) {
@@ -35,17 +34,14 @@ app.post('/run', asyncHandler(async (req, res) => {
 
   try {
     const input = JSON.parse(inputJSON)
-    console.log(input)
     const output = await replicate.run(`${username}/${model}:${version}`, { input })
     res.status(200).json(output)
   } catch (e) {
-    console.log(e)
     res.status(500).json({ error: e.message })
   }
 }))
 
 app.post('/model', asyncHandler(async (req, res) => {
-  console.log('model', req.body)
   const { username, model } = req.body
   const response = await replicate.models.get(username, model)
   const output = {
@@ -58,7 +54,6 @@ app.post('/model', asyncHandler(async (req, res) => {
 }))
 
 app.post('/collections', asyncHandler(async (req, res) => {
-  console.log('collections')
   res.status(200).json([
     {
       slug: 'image-to-text',
@@ -96,7 +91,6 @@ app.post('/collections', asyncHandler(async (req, res) => {
 }))
 
 app.post('/collection', asyncHandler(async (req, res) => {
-  console.log('collection', req.body)
   const { collection_slug } = req.body
   const response = await replicate.collections.get(collection_slug)
   const models = response.models.map((model) => {
