@@ -69,6 +69,12 @@ app.post('/run', asyncHandler(async (req, res) => {
   try {
     const modelOutputs = await Promise.all(models.map(async ({ username, model, input }) => {
       try {
+        if (!modelsAndVersions[username] || !modelsAndVersions[username][model]) {
+          const response = await replicate.models.get(username, model)
+          modelsAndVersions[username] = modelsAndVersions[username] || {}
+          modelsAndVersions[username][model] = response.latest_version.id
+        }
+
         const modelId = `${username}/${model}:${modelsAndVersions[username][model]}`
         const output = await replicate.run(modelId, { input })
         return { output, error: null }
@@ -138,6 +144,7 @@ app.post('/collection', asyncHandler(async (req, res) => {
   const { collection_slug } = req.body
   const response = await replicate.collections.get(collection_slug)
   const models = response.models.map((model) => {
+    modelsAndVersions[model.owner] = modelsAndVersions[model.owner] || {}
     modelsAndVersions[model.owner][model.name] = model.latest_version.id
     return {
       url: model.url,
