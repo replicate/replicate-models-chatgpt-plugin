@@ -3,7 +3,7 @@
   "name_for_human": "Replicate models",
   "name_for_model": "replicate_sd",
   "description_for_human": "Plugin to run Replicate models",
-  "description_for_model": "Plugin to run Replicate models\nPopular models are:\nreplicate/llama-7b, ai-forever/kandinsky-2, cjwbw/stable-diffusion-v2.1 (Stable diffusion 2), stability-ai/stable-diffusion (or 'SD', for stable diffusion 1.5), cjwbw/damo-text-to-video, rossjillian/controlnet (For stable diffusion 1.5), rossjillian/controlnet_2-1 (For stable diffusion 2.1), cjwbw/semantic-segment-anything, salesforce/blip, \nOther popular diffusion models include: cjwbw/anything-v4.0 (anime images), prompthero/openjourney, deforum/deforum_stable_diffusion for making animations from prompts",
+  "description_for_model": "Plugin to run Replicate models\nPopular models are:\nreplicate/llama-7b (an llm), ai-forever/kandinsky-2 (text to image), cjwbw/stable-diffusion-v2.1 (Stable diffusion 2, text to image), stability-ai/stable-diffusion (or 'SD', for Stable diffusion 1.5), cjwbw/damo-text-to-video, rossjillian/controlnet (For stable diffusion 1.5), rossjillian/controlnet_2-1 (For stable diffusion 2.1), cjwbw/semantic-segment-anything (identify segments in images and label them), salesforce/blip (describe an image), deforum/deforum_stable_diffusion (for making animations from prompts).\nOther popular diffusion models include: cjwbw/anything-v4.0 (anime images), prompthero/openjourney (like Midjourney)",
   "auth": {
     "type": "none"
   },
