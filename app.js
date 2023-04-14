@@ -44,6 +44,19 @@ app.post('/run', asyncHandler(async (req, res, next) => {
   // loop through models and check for required parameters
   const missing = []
   for (const m of models) {
+    // Make the inputs flexible for ChatGPT
+    if (m.inputs) m.input = m.inputs
+
+    // No input, but object is more than just username and model, assume the rest are inputs
+    if (!m.input && Object.keys(m).length > 2) {
+      m.input = {}
+      for (const key in m) {
+        if (key !== 'username' && key !== 'model') {
+          m.input[key] = m[key]
+        }
+      }
+    }
+
     const { username, model, input } = m
     if (!username || !model || !input) {
       const missingForModel = []
@@ -64,7 +77,7 @@ app.post('/run', asyncHandler(async (req, res, next) => {
 }))
 
 app.post('/run', asyncHandler(async (req, res) => {
-  const { models } = req.body
+  const models = res.locals.models
 
   try {
     const modelOutputs = await Promise.all(models.map(async ({ username, model, input }) => {
