@@ -16,7 +16,11 @@ const isValidArray = (body, name) => {
 }
 
 const normalize = (obj) => {
-  for (const params of obj) {
+  for (let params of obj) {
+    if (typeof params === 'string') {
+      params = { model: params }
+    }
+
     if (params.model.includes(':')) {
       params.model = params.model.split(':')[0]
     }
@@ -33,11 +37,12 @@ const normalize = (obj) => {
     }
 
     // No input, but object is more than just username and model, assume the rest are inputs
-    if (!params.input && Object.keys(m).length > 2) {
+    if (!params.input && Object.keys(params).length > 2) {
       params.input = {}
-      for (const key in m) {
+      for (const key in params) {
         if (key !== 'username' && key !== 'model') {
-          params.input[key] = m[key]
+          params.input[key] = params[key]
+          delete params[key]
         }
       }
     }
@@ -70,8 +75,22 @@ const isMissingParams = (items, requiredParams) => {
   return missing.length > 0
 }
 
+const isValidInputForSchema = (input, schema) => {
+  const validInputs = schema.components.schemas.Input.properties
+  const errors = []
+
+  for (const key in input) {
+    if (!validInputs[key]) {
+      errors.push(`${key} is not a valid input for this model. See schema`)
+    }
+  }
+
+  return { isValid: errors.length === 0, err: errors.join('\n') }
+}
+
 export {
   isValidArray,
   isMissingParams,
-  normalize
+  normalize,
+  isValidInputForSchema
 }

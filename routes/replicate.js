@@ -1,5 +1,10 @@
 import asyncHandler from 'express-async-handler'
-import { isMissingParams, isValidArray, normalize } from '../helpers/input-validator.js'
+import {
+  isMissingParams,
+  isValidArray,
+  normalize,
+  isValidInputForSchema
+} from '../helpers/input-validator.js'
 
 const modelsAndVersions = {}
 
@@ -12,22 +17,18 @@ export default (app, replicate) => {
   }))
 
   app.post('/run', asyncHandler(async (_req, res) => {
-    console.log('running', res.locals.models)
-    const models = res.locals.models
-
     try {
-      const modelOutputs = await Promise.all(models.map(async ({ username, model, input }) => {
+      const modelOutputs = await Promise.all(res.locals.models.map(async ({ username, model, input }) => {
         try {
           if (!modelsAndVersions[username] || !modelsAndVersions[username][model]) {
             const response = await replicate.models.get(username, model)
             modelsAndVersions[username] = modelsAndVersions[username] || {}
-            modelsAndVersions[username][model] = { id: response.latest_version.id, inputs: response.latest_version.openapi_schema }
+            modelsAndVersions[username][model] = { id: response.latest_version.id, schema: response.latest_version.openapi_schema }
           }
 
-          const isValid = validate(input)
+          const { isValid, err } = isValidInputForSchema(input, modelsAndVersions[username][model].schema)
           if (!isValid) {
-            console.log('not valid', validate.errors)
-            return { error: validate.errors }
+            return { error: err, schema: modelsAndVersions[username][model].schema }
           }
 
           const modelId = `${username}/${model}:${modelsAndVersions[username][model].id}`
@@ -53,9 +54,8 @@ export default (app, replicate) => {
   }))
 
   app.post('/getModelSchemas', asyncHandler(async (req, res) => {
-    const schemas = res.locals.schemas
     try {
-      const outputs = await Promise.all(schemas.map(async ({ username, model }) => {
+      const outputs = await Promise.all(res.locals.schemas.map(async ({ username, model }) => {
         try {
           const response = await replicate.models.get(username, model)
           console.log(username, model, response)
