@@ -90,9 +90,9 @@ app.post('/run', asyncHandler(async (req, res) => {
 
         const modelId = `${username}/${model}:${modelsAndVersions[username][model]}`
         const output = await replicate.run(modelId, { input })
-        return { output, error: null }
+        return { output }
       } catch (e) {
-        return { output: null, error: e.message }
+        return { error: e.message }
       }
     }))
 
