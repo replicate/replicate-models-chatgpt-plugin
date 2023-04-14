@@ -2,12 +2,28 @@
 
 A simple plugin based on https://github.com/openai/plugins-quickstart
 
-Use Node and Express.js
-
 ## Install and use
 
-- Clone this repo
-- npm install
-- run `node app.js`
-- add your REPLICATE_API_TOKEN to your environment
-- add the app to ChatGPT under 'Develop your own plugin' (use localhost:5003 as the domain)
+You'll need to have [Node.js](https://nodejs.org) installed.
+
+Clone this repo and install dependencies:
+
+```
+git clone https://github.com/fofr/replicate-models-chatgpt-plugin
+cd replicate-models-chatgpt-plugin
+npm install
+```
+
+Start the server:
+
+```
+npm run dev
+```
+
+Configure ChatGPT to use the plugin:
+
+1. Go to https://chat.openai.com
+1. Click Plugins dropdown
+1. Click Plugin store
+1. Click 'Develop your own plugin'
+1. Use localhost:5003 as the domain
