@@ -55,6 +55,35 @@ paths:
 
 components:
   schemas:
+    Model:
+      type: object
+      properties:
+        username:
+          type: string
+          description: The owner of the model
+        model:
+          type: string
+          description: The name of the model
+        input:
+          type: object
+          description: The input data to be passed to the model
+      required:
+        - username
+        - model
+        - input
+    runModelRequest:
+      type: object
+      properties:
+        models:
+          type: array
+          description: An array of models and their inputs
+          items:
+            $ref: '#/components/schemas/Model'
+      required:
+        - models
+    runModelResponse:
+      type: string
+      description: JSON representation of an array of the outputs from the models
     getCollectionRequest:
       type: object
       properties:
@@ -63,8 +92,14 @@ components:
           description: slug of the collection
           required: true
     getModelResponse:
-      type: string
-      description: JSON representation of the model and its input parameters, including version number
+      type: array,
+      description: An array containing each of the model outputs,
+      items:
+        type: object,
+        properties:
+          output:
+            type: string,
+            description: The output from the model
     getModelRequest:
       type: object
       properties:
@@ -76,25 +111,6 @@ components:
           type: string
           description: name of the model
           required: true
-    runModelResponse:
-      type: string
-      description: JSON representation of the output from the model
-    runModelRequest:
-      type: object
-      properties:
-        username:
-          type: string
-          description: owner of the model
-          required: true
-        model:
-          type: string
-          description: name of the model
-          required: true
-        version:
-          type: string
-          description: the version of the model to use
-          required: true
-        inputJSON:
-          type: string
-          description: a stringified JSON object of the input params for the model
-          required: true
+      required:
+        - username
+        - model
