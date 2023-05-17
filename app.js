@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import asyncHandler from 'express-async-handler'
 import path from 'path'
+import fs from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import Replicate from 'replicate'
@@ -118,13 +119,33 @@ app.get('/logo.png', asyncHandler(async (req, res) => {
 }))
 
 app.get('/.well-known/ai-plugin.json', asyncHandler(async (req, res) => {
-  const filename = path.join(__dirname, '.well-known', 'ai-plugin.json')
-  res.sendFile(filename, { headers: { 'Content-Type': 'application/json' } })
+  const schema = {
+    schema_version: "v1",
+    name_for_human: "Replicate models",
+    name_for_model: "replicate_models",
+    description_for_human: "Plugin to run Replicate models",
+    description_for_model: "Plugin to run Replicate models",
+    auth: {
+      type: "none"
+    },
+    api: {
+      type: "openapi",
+      url: `${process.env.APP_HOST}/openapi.yaml`,
+      is_user_authenticated: false
+    },
+    logo_url: `${process.env.APP_HOST}/logo.png`,
+    contact_email: "team@replicate.com",
+    legal_info_url: "http://replicate.com/terms"
+  }
+
+  res.status(200).json(schema)  
 }))
 
 app.get('/openapi.yaml', asyncHandler(async (req, res) => {
   const filename = path.join(__dirname, 'openapi.yaml')
-  res.sendFile(filename, { headers: { 'Content-Type': 'text/yaml' } })
+  const schema = fs.readFileSync(filename, 'utf8').replace(/{APP_HOST}/g, process.env.APP_HOST)
+  res.setHeader('Content-Type', 'text/yaml');
+  res.status(200).send(schema)
 }))
 
 const main = () => {
