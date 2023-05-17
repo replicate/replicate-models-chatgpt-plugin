@@ -2,12 +2,50 @@
 
 A simple plugin based on https://github.com/openai/plugins-quickstart
 
-Use Node and Express.js
+## Development
 
-## Install and use
+Preqrequisites:
 
-- Clone this repo
-- npm install
-- run `node app.js`
-- add your REPLICATE_API_TOKEN to your environment
-- add the app to ChatGPT under 'Develop your own plugin' (use localhost:5003 as the domain)
+- Access to OpenAI's plugin beta
+- [Node.js](https://nodejs.org) for running the server
+- [ngrok](https://ngrok.com/) for port forwarding
+
+Clone this repo and install dependencies:
+
+```
+git clone https://github.com/fofr/replicate-models-chatgpt-plugin
+cd replicate-models-chatgpt-plugin
+npm install
+```
+
+Start the server:
+
+```
+npm run dev
+```
+
+Start up ngrok, pointing at port 5003:
+
+```
+ngrok http 5003
+```
+
+Create `.env` and set your ngrok URL as the `APP_HOST`:
+
+```
+APP_HOST="https://0dc4a909eb0e.ngrok.app"
+```
+
+Grab your Replicate API token from https://replicate.com/account, then paste it into .env:
+
+```
+REPLICATE_API_TOKEN=r8_...
+```
+
+Configure ChatGPT to use the plugin:
+
+1. Go to https://chat.openai.com
+1. Click Plugins dropdown
+1. Click Plugin store
+1. Click 'Develop your own plugin'
+1. Use your ngrok host as the domain
