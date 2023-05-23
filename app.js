@@ -35,8 +35,13 @@ app.post('/run', asyncHandler(async (req, res) => {
   }
 
   try {
-    const input = JSON.parse(inputJSON)
+    let input = JSON.parse(inputJSON)
     console.log(input)
+    // chatgpt sometimes make the wraps the input as { input: { prompt: "foo" }}
+    // we need to unwrap if so, so it doesn't end up double escaped in the run below
+    if (typeof input === 'object' && input.hasOwnProperty('input')) {
+      input = input['input']
+    }
     const output = await replicate.run(`${username}/${model}:${version}`, { input })
     res.status(200).json(output)
   } catch (e) {
