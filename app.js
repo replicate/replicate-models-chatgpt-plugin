@@ -62,8 +62,12 @@ app.post('/collections', asyncHandler(async (req, res) => {
   console.log('collections')
   res.status(200).json([
     {
-      slug: 'image-to-text',
+      slug: 'text-to-image',
       description: 'Models that generate images from text prompts'
+    },
+    {
+      slug: 'image-to-text',
+      description: 'Models that generate text from images'
     },
     {
       slug: 'audio-generation',
